@@ -1,0 +1,41 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "assou-app",
+                    "appId": "1:831614334735:android:ab543ca1498c639386707a",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "assou-app",
+                    "appId": "1:831614334735:ios:4f4ee129fbe6fba486707a",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "macos": {
+                "default": {
+                    "projectId": "assou-app",
+                    "appId": "1:831614334735:ios:4f4ee129fbe6fba486707a",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "assou-app",
+                    "configurations": {
+                        "android": "1:831614334735:android:ab543ca1498c639386707a",
+                        "ios": "1:831614334735:ios:4f4ee129fbe6fba486707a",
+                        "macos": "1:831614334735:ios:4f4ee129fbe6fba486707a",
+                        "web": "1:831614334735:web:2935dce24207145386707a",
+                        "windows": "1:831614334735:web:750d150fc66471b986707a"
+                    }
+                }
+            }
+        }
+    }
+}

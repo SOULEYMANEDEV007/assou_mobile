@@ -98,11 +98,10 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
         UserService.logout();
 
-        Navigator.of(context, rootNavigator: true)
-            .popUntil((route) => route.isFirst);
-
-        Navigator.of(context).pushReplacement(
+        // Reset navigation stack to PinLoginScreen
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const PinLoginScreen()),
+          (route) => false,
         );
       });
     });

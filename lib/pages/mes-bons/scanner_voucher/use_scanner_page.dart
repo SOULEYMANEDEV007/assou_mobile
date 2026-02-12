@@ -49,16 +49,79 @@ class _UseScannerPageState extends State<UseScannerPage> {
       if (!mounted) return;
 
       if (response.success) {
-        ToastHelper.showToast(
-          context,
-          title: "Utilisation du bon",
-          message: "Bon utilisé avec succès ✅",
-          type: ToastType.success,
-        );
-
-        await Future.delayed(const Duration(milliseconds: 800));
         if (!mounted) return;
-        Navigator.pushReplacementNamed(context, "/home");
+
+        // Afficher un dialogue de succès au lieu d'un toast
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Icône de succès
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 60,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // Message de succès
+                    const Text(
+                      'Utilisation du bon\neffectuée avec succès ✅',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // Bouton OK
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.pushReplacementNamed(context, "/home");
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2196F3),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'OK',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
       } else {
         ToastHelper.showToast(
           context,
@@ -67,9 +130,9 @@ class _UseScannerPageState extends State<UseScannerPage> {
           type: ToastType.error,
         );
 
-        await Future.delayed(const Duration(milliseconds: 800));
+        await Future.delayed(const Duration(milliseconds: 1500));
         if (!mounted) return;
-        Navigator.pushReplacementNamed(context, "/home");
+        Navigator.pop(context);
       }
     } catch (e) {
       if (!mounted) return;
@@ -145,7 +208,7 @@ class _UseScannerPageState extends State<UseScannerPage> {
 
                       // Convertir les coordonnées caméra vers écran
                       final size = capture.size;
-                      if (size.width > 0 && size.height > 0) {
+                      if (size != null && size.width > 0 && size.height > 0) {
                         // Ratio de conversion
                         final scaleX = screenWidth / size.width;
                         final scaleY = screenHeight / size.height;
@@ -161,7 +224,7 @@ class _UseScannerPageState extends State<UseScannerPage> {
                           _onQrDetected(rawValue);
                         }
                       } else {
-                        // Si pas de size, scanner quand même
+                        // Si pas de size ou size invalide, scanner quand même car le QR est là
                         _onQrDetected(rawValue);
                       }
                     } else {

@@ -160,19 +160,42 @@ class VoucherService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final List<PaiementBon> vouchers;
+        final List<PaiementBon> vouchers = [];
 
-        // Handle the nested data structure
-        if (data['data'] is Map && data['data']['data'] != null) {
-          vouchers = (data['data']['data'] as List)
-              .map((json) => PaiementBon.fromJson(json))
-              .toList();
-        } else if (data['data'] is List) {
-          vouchers = (data['data'] as List)
-              .map((json) => PaiementBon.fromJson(json))
-              .toList();
-        } else {
-          vouchers = [];
+        // Handle the nested data structure and flatten orders (Paiement) into individual vouchers (PaiementBon)
+        dynamic rawData = data['data'];
+        if (rawData is Map && rawData['data'] != null) {
+          rawData = rawData['data'];
+        }
+
+        if (rawData is List) {
+          for (var item in rawData) {
+            // Check if this is an Order (Paiement) containing a list of vouchers
+            if (item['paiement_bons'] != null &&
+                item['paiement_bons'] is List) {
+              for (var bonJson in item['paiement_bons']) {
+                // FALLBACK: Inherit relations from parent order if missing on the individual voucher
+                if (bonJson['boutique'] == null && item['boutique'] != null) {
+                  bonJson['boutique'] = item['boutique'];
+                }
+                if (bonJson['bon_achat'] == null && item['bon_achat'] != null) {
+                  bonJson['bon_achat'] = item['bon_achat'];
+                }
+                if (bonJson['event'] == null && item['event'] != null) {
+                  bonJson['event'] = item['event'];
+                }
+                // Inherit simple fields like is_universal
+                if (bonJson['is_universal'] == null &&
+                    item['is_universal'] != null) {
+                  bonJson['is_universal'] = item['is_universal'];
+                }
+                vouchers.add(PaiementBon.fromJson(bonJson));
+              }
+            } else {
+              // Direct voucher list (as returned by /bon-actifs)
+              vouchers.add(PaiementBon.fromJson(item));
+            }
+          }
         }
 
         AppLogger.info(
@@ -453,6 +476,7 @@ class VoucherService {
 
     try {
       String finalCodeBoutique = codeBoutique;
+      String finalBonId = slugBonPaiement;
 
       // Logique pour extraire le code boutique s'il est contenu dans un JSON (QR code structuré)
       if (codeBoutique.trim().startsWith('{')) {
@@ -460,6 +484,8 @@ class VoucherService {
           AppLogger.debug(
               'Attempting to parse JSON codeBoutique...', 'VOUCHER_SERVICE');
           final Map<String, dynamic> decoded = jsonDecode(codeBoutique);
+
+          // Extraction du code boutique
           if (decoded.containsKey('code_boutique')) {
             finalCodeBoutique = decoded['code_boutique'].toString();
             AppLogger.info(
@@ -471,6 +497,16 @@ class VoucherService {
                 'Extracted boutique_code from JSON: $finalCodeBoutique',
                 'VOUCHER_SERVICE');
           }
+
+          // Extraction de l'ID du bon (id_bon_achat)
+          // CORRECTION: Ne pas écraser l'ID du bon de paiement (slugBonPaiement) avec l'ID générique du produit (id_bon_achat)
+          /*
+          if (decoded.containsKey('id_bon_achat')) {
+            finalBonId = decoded['id_bon_achat'].toString();
+            AppLogger.info('Extracted id_bon_achat from JSON: $finalBonId',
+                'VOUCHER_SERVICE');
+          }
+          */
         } catch (e) {
           AppLogger.warning(
               'Failed to parse JSON codeBoutique, using raw string',
@@ -484,7 +520,7 @@ class VoucherService {
         'boutique_code': finalCodeBoutique,
         'code_boutique':
             finalCodeBoutique, // Variante possible attendue par le backend
-        'bon_id': slugBonPaiement,
+        'bon_id': finalBonId,
       };
 
       if (message != null) {

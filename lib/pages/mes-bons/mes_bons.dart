@@ -176,22 +176,37 @@ class _MesBonsPageState extends State<MesBonsPage>
       final token = await UserService.getAuthToken();
       if (token == null) throw Exception('Token non trouvé');
 
-      final tousBons =
-          await VoucherService.getMyVouchers(token, page: 1, perPage: _perPage);
-      final utilises = tousBons.where((bon) {
-        return bon.dateAchat != null && // 🔥 Only show paid vouchers
+      // Fetch both purchased and received vouchers to find used ones
+      final results = await Future.wait([
+        VoucherService.getMyVouchers(token, page: 1, perPage: _perPage),
+        VoucherService.getMyReceivedVouchers(token, page: 1, perPage: _perPage),
+      ]);
+
+      final purchasedBons = results[0];
+      final receivedBons = results[1];
+
+      // Combine and filter for used status
+      final used = <PaiementBon>[];
+      final seenIds = <int>{};
+
+      for (final bon in [...purchasedBons, ...receivedBons]) {
+        if (!seenIds.contains(bon.id) &&
+            bon.dateAchat != null && // Only show paid vouchers
             bon.isUtiliseForUser(_currentUser?.id) &&
-            (bon.receiverId == _currentUser?.id || bon.receiverId == null);
-      }).toList();
+            (bon.receiverId == _currentUser?.id || bon.receiverId == null)) {
+          used.add(bon);
+          seenIds.add(bon.id);
+        }
+      }
 
       if (mounted) {
         // Sort from most recent usage to least recent
-        utilises.sort((a, b) =>
+        used.sort((a, b) =>
             (b.dateUsage ?? DateTime(0)).compareTo(a.dateUsage ?? DateTime(0)));
 
         setState(() {
-          _bonsUtilises = utilises;
-          _tabHasMore[1] = utilises.length >= _perPage;
+          _bonsUtilises = used;
+          _tabHasMore[1] = used.length >= _perPage;
           _isLoading = false;
         });
       }
@@ -342,13 +357,22 @@ class _MesBonsPageState extends State<MesBonsPage>
           }
           break;
         case 1: // Utilisés
-          final tous = await VoucherService.getMyVouchers(token,
+          final purchased = await VoucherService.getMyVouchers(token,
               page: currentTabPage, perPage: _perPage);
-          newVouchers = tous.where((bon) {
-            return bon.dateAchat != null && // 🔥 Only show paid vouchers
+          final received = await VoucherService.getMyReceivedVouchers(token,
+              page: currentTabPage, perPage: _perPage);
+
+          final currentIds = _bonsUtilises.map((b) => b.id).toSet();
+          for (final bon in [...purchased, ...received]) {
+            if (!currentIds.contains(bon.id) &&
+                bon.dateAchat != null &&
                 bon.isUtiliseForUser(_currentUser?.id) &&
-                (bon.receiverId == _currentUser?.id || bon.receiverId == null);
-          }).toList();
+                (bon.receiverId == _currentUser?.id ||
+                    bon.receiverId == null)) {
+              newVouchers.add(bon);
+              currentIds.add(bon.id);
+            }
+          }
           break;
         case 2: // Envoyés
           final explicitEnvoyes = await VoucherService.getMySentVouchers(token,
@@ -676,9 +700,9 @@ class _MesBonsPageState extends State<MesBonsPage>
                       final logoUrl = isUniversal
                           ? "assets/images/mesbons.png"
                           : (bon?.boutiqueLogoUrl ??
-                              paiementBon.boutique?.logoUrl);
-                      final eventImageUrl =
-                          bon?.fullImageUrl ?? paiementBon.event?.imageUrl;
+                              paiementBon.boutique?.logoUrl ??
+                              bon?.fullImageUrl ??
+                              paiementBon.event?.imageUrl);
 
                       return _buildVoucherImage(
                         boutiqueLogoUrl: logoUrl,
@@ -820,7 +844,9 @@ class _MesBonsPageState extends State<MesBonsPage>
                                   boutiqueLogoUrl: isUniversal
                                       ? "assets/images/mesbons.png"
                                       : (bon?.boutiqueLogoUrl ??
-                                          paiementBon.boutique?.logoUrl),
+                                          paiementBon.boutique?.logoUrl ??
+                                          bon?.fullImageUrl ??
+                                          paiementBon.event?.imageUrl),
                                   eventIcon: paiementBon.event?.iconData,
                                   donatorName: donorName ?? recipientName,
                                   userId: _currentUser?.id,
@@ -966,7 +992,8 @@ class _MesBonsPageState extends State<MesBonsPage>
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => UseScannerPage(idPaiementBon: paiementBon.slug),
+        builder: (_) =>
+            UseScannerPage(idPaiementBon: paiementBon.id.toString()),
       ),
     );
 

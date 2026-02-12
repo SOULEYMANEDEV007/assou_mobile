@@ -291,7 +291,25 @@ class PaiementBon {
               : (json['bon_achat'] != null &&
                       json['bon_achat']['boutique'] != null)
                   ? Boutique.fromJson(json['bon_achat']['boutique'])
-                  : null,
+                  // Fallback: If there's an id_boutique and a logo_boutique, create a partial boutique
+                  : (json['id_boutique'] != null ||
+                          json['logo_boutique'] != null ||
+                          json['boutique_nom'] != null)
+                      ? Boutique(
+                          id: json['id_boutique'] ?? 0,
+                          name: json['nom_boutique'] ??
+                              json['boutique_nom'] ??
+                              json['boutique_name'] ??
+                              '',
+                          slug: json['slug_boutique'] ??
+                              json['boutique_slug'] ??
+                              '',
+                          logo: json['logo_boutique'] ??
+                              json['boutique_logo'] ??
+                              json['logo'] ??
+                              '',
+                        )
+                      : null,
       donateur:
           json['donateur'] != null ? User.fromJson(json['donateur']) : null,
       receiver:

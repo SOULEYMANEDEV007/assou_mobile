@@ -1,7 +1,6 @@
 // Test script to verify deep link handling
 // Run with: dart test_deep_link.dart
 
-import 'dart:io';
 
 void main() {
   print('🔗 Deep Link Configuration Test\n');

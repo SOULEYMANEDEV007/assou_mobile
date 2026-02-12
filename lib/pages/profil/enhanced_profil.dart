@@ -1,6 +1,5 @@
 import 'package:ASSOU/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,8 +10,6 @@ import '../../data/models/user_model.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_input.dart';
-import '../../widgets/enhanced_bottom_nav.dart';
-import '../../services/settings_service.dart';
 import '../../widgets/numeric_password_field.dart';
 import '../../widgets/toast_helper.dart';
 import '../auth/login_screen.dart';

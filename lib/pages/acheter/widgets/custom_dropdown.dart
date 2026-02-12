@@ -9,14 +9,14 @@ class CustomDropdown extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const CustomDropdown({
-    Key? key,
+    super.key,
     required this.label,
     this.placeholder,
     required this.selectedValue,
     required this.options,
     required this.onChanged,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class CustomDropdown extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: selectedValue,
+          initialValue: selectedValue,
           hint: Text(
             placeholder ?? 'Sélectionner',
             style: const TextStyle(color: Color(0xFF999999)),

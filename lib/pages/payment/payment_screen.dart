@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import '../../data/services/deep_link_payment_service.dart';
 import '../../utils/logger.dart';
-import '../../data/services/user_service.dart';
 import '../mes-bons/mes_bons.dart';
 import 'package:provider/provider.dart';
 import '../../providers/reward_provider.dart';

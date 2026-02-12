@@ -364,7 +364,12 @@ class _VoucherDetailsCardState extends State<VoucherDetailsCard> {
                             children: [
                               const TextSpan(text: "Utilisation de ce bon : "),
                               TextSpan(
-                                text: widget.boutiqueName ?? "N/A",
+                                text: (widget.boutiqueName?.toLowerCase() ==
+                                            "toutes les boutiques" ||
+                                        widget.boutiqueName?.toLowerCase() ==
+                                            "assou")
+                                    ? "Toutes les boutiques"
+                                    : (widget.boutiqueName ?? "N/A"),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black87,
@@ -393,15 +398,17 @@ class _VoucherDetailsCardState extends State<VoucherDetailsCard> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        widget.boutiqueName ?? "Partenaire",
+                        (widget.boutiqueName?.toLowerCase() ==
+                                    "toutes les boutiques" ||
+                                widget.boutiqueName?.toLowerCase() == "assou")
+                            ? "ASSOU"
+                            : (widget.boutiqueName ?? "Partenaire"),
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 10, // Réduit légèrement
                           fontWeight: FontWeight.w500,
                           color: Colors.grey.shade600,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

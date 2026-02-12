@@ -2,7 +2,6 @@ import 'package:ASSOU/utils/logger.dart';
 import '../../config/environment.dart';
 import 'package:ASSOU/widgets/custom_app_bar.dart';
 import 'package:ASSOU/widgets/toast_helper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/api_response_model.dart';
 
@@ -402,9 +401,11 @@ class _VoucherDetailsPageState extends State<VoucherDetailsPage> {
     final String partnerOrRecipientPhone =
         widget.partnerPhone ?? widget.recipientPhone ?? "N/A";
 
-    final String shopLabel = widget.boutiqueName == "Toutes les boutiques"
-        ? "Assou"
-        : (widget.boutiqueName ?? "Boutique");
+    final String shopLabel =
+        (widget.boutiqueName?.toLowerCase() == "toutes les boutiques" ||
+                widget.boutiqueName?.toLowerCase() == "assou")
+            ? "ASSOU"
+            : (widget.boutiqueName ?? "Boutique");
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -422,7 +423,18 @@ class _VoucherDetailsPageState extends State<VoucherDetailsPage> {
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                color: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -454,7 +466,12 @@ class _VoucherDetailsPageState extends State<VoucherDetailsPage> {
                                 const TextSpan(
                                     text: "Utilisation de ce bon : "),
                                 TextSpan(
-                                  text: widget.boutiqueName ?? "N/A",
+                                  text: (widget.boutiqueName?.toLowerCase() ==
+                                              "toutes les boutiques" ||
+                                          widget.boutiqueName?.toLowerCase() ==
+                                              "assou")
+                                      ? "Toutes les boutiques"
+                                      : (widget.boutiqueName ?? "N/A"),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black87,
@@ -518,14 +535,12 @@ class _VoucherDetailsPageState extends State<VoucherDetailsPage> {
                         Text(
                           shopLabel,
                           style: const TextStyle(
-                            fontSize: 11,
+                            fontSize: 10, // Réduit légèrement
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Nunito',
                             color: Color(0xFF1A1A1A),
                           ),
                           textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -533,140 +548,143 @@ class _VoucherDetailsPageState extends State<VoucherDetailsPage> {
                 ),
               ),
 
-              // Image du bon
+              const SizedBox(height: 20),
+
+              // Section Image et Message (Uniformisée)
               Container(
-                margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    Environment.getImageUrl(widget.imageUrl) ??
-                        "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=800&auto=format&fit=crop&q=80",
-                    height: 230,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 230,
-                        color: Colors.grey.shade200,
-                        child: Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey.shade400,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // Message du bon
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius:
-                      const BorderRadius.vertical(bottom: Radius.circular(15)),
-                ),
                 child: Column(
                   children: [
-                    if (widget.personal_message != null &&
-                        widget.personal_message!.isNotEmpty)
-                      Column(
+                    // Image du bon
+                    ClipRRect(
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(12)),
+                      child: Image.network(
+                        Environment.getImageUrl(widget.imageUrl) ??
+                            "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=800&auto=format&fit=crop&q=80",
+                        height: 230,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 230,
+                            color: Colors.grey.shade200,
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 50,
+                              color: Colors.grey.shade400,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    // Message du bon
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(12)),
+                      ),
+                      child: Column(
                         children: [
+                          if (widget.personal_message != null &&
+                              widget.personal_message!.isNotEmpty)
+                            Column(
+                              children: [
+                                Text(
+                                  widget.personal_message!,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey.shade800,
+                                    height: 1.5,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                            ),
+                          const SizedBox(height: 12),
                           Text(
-                            widget.personal_message!,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey.shade800,
-                              height: 1.5,
+                            "$partnerOrRecipientName ($partnerOrRecipientPhone)",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Nunito',
+                              color: Color(0xFF555555),
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 12),
+
+                          // Bouton Remercier
+                          if (widget.senderId != widget.userId &&
+                              (widget.etatReceiver == 1 || widget.etat == 1))
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: isLoadingRemerciment
+                                  ? Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.blue.shade600,
+                                      ),
+                                    )
+                                  : ElevatedButton(
+                                      onPressed: (widget.currentTab == 0 &&
+                                              (widget.etatReceiver == 1 ||
+                                                  widget.etat == 1) &&
+                                              _hasThanked != true)
+                                          ? _showThankYouMessageDialog
+                                          : null,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            (widget.currentTab == 0 &&
+                                                    (widget.etatReceiver == 1 ||
+                                                        widget.etat == 1) &&
+                                                    _hasThanked != true)
+                                                ? Colors.blue.shade600
+                                                : Colors.grey.shade300,
+                                        foregroundColor:
+                                            (widget.currentTab == 0 &&
+                                                    (widget.etatReceiver == 1 ||
+                                                        widget.etat == 1) &&
+                                                    _hasThanked != true)
+                                                ? Colors.white
+                                                : Colors.grey.shade500,
+                                        minimumSize:
+                                            const Size(double.infinity, 44),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(22),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      child: Text(
+                                        _hasThanked == true
+                                            ? "Déjà remercié"
+                                            : "Remercier",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                            ),
                         ],
                       ),
-                    /*Text(
-                      widget.description ?? "Aucune description disponible",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade700,
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),*/
-                    const SizedBox(height: 12),
-                    Text(
-                      "$partnerOrRecipientName ($partnerOrRecipientPhone)",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Nunito',
-                        color: Color(0xFF555555),
-                      ),
-                      textAlign: TextAlign.center,
                     ),
-
-                    // Bouton Remercier (Visibilité corrigée pour les bons reçus)
-                    if (widget.senderId != widget.userId &&
-                        (widget.etatReceiver == 1 || widget.etat == 1))
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: isLoadingRemerciment
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.blue.shade600,
-                                ),
-                              )
-                            : ElevatedButton(
-                                onPressed: (widget.currentTab == 0 &&
-                                        (widget.etatReceiver == 1 ||
-                                            widget.etat == 1) &&
-                                        _hasThanked != true)
-                                    ? _showThankYouMessageDialog
-                                    : null,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: (widget.currentTab == 0 &&
-                                          (widget.etatReceiver == 1 ||
-                                              widget.etat == 1) &&
-                                          _hasThanked != true)
-                                      ? Colors.blue.shade600
-                                      : Colors.grey.shade300,
-                                  foregroundColor: (widget.currentTab == 0 &&
-                                          (widget.etatReceiver == 1 ||
-                                              widget.etat == 1) &&
-                                          _hasThanked != true)
-                                      ? Colors.white
-                                      : Colors.grey.shade500,
-                                  minimumSize: const Size(double.infinity, 44),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: Text(
-                                  _hasThanked == true
-                                      ? "Déjà remercié"
-                                      : "Remercier",
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                      ),
                   ],
                 ),
               ),

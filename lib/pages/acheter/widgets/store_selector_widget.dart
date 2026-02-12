@@ -44,7 +44,7 @@ class StoreSelectorWidget extends StatefulWidget {
   final String emptyMessage;
 
   const StoreSelectorWidget({
-    Key? key,
+    super.key,
     this.title = 'Choix du supermarché / boutique',
     required this.stores,
     this.selectedStore,
@@ -59,7 +59,7 @@ class StoreSelectorWidget extends StatefulWidget {
     this.margin,
     this.isLoading = false,
     this.emptyMessage = 'Aucune boutique disponible',
-  }) : super(key: key);
+  });
 
   @override
   State<StoreSelectorWidget> createState() => _StoreSelectorWidgetState();

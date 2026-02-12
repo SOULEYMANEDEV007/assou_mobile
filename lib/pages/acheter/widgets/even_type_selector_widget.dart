@@ -51,7 +51,7 @@ class EventTypeSelectorWidget extends StatefulWidget {
   final bool showSelectedIcon;
 
   const EventTypeSelectorWidget({
-    Key? key,
+    super.key,
     this.title = 'Pour quel événement ?',
     this.label = 'Choisir l\'occasion',
     this.placeholder = 'Sélectionner un événement',
@@ -67,7 +67,7 @@ class EventTypeSelectorWidget extends StatefulWidget {
     this.padding,
     this.decoration,
     this.showSelectedIcon = true,
-  }) : super(key: key);
+  });
 
   @override
   State<EventTypeSelectorWidget> createState() =>

@@ -173,10 +173,12 @@ class ProfileService {
     try {
       final settingsData = <String, dynamic>{};
       if (language != null) settingsData['language'] = language;
-      if (notificationsEnabled != null)
+      if (notificationsEnabled != null) {
         settingsData['notifications_enabled'] = notificationsEnabled;
-      if (darkModeEnabled != null)
+      }
+      if (darkModeEnabled != null) {
         settingsData['dark_mode_enabled'] = darkModeEnabled;
+      }
       if (customSettings != null) settingsData.addAll(customSettings);
 
       final response = await ApiService.post<Map<String, dynamic>>(

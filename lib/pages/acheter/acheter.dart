@@ -358,6 +358,90 @@ class _AcheterBonPageState extends State<AcheterBonPage>
     return selectedVoucherIds.length;
   }
 
+  double _getCurrentSubtotal() {
+    final montantStr = montantController.text.trim().replaceAll(' ', '');
+    return double.tryParse(montantStr) ?? 0.0;
+  }
+
+  Widget _buildOrderSummary() {
+    final subtotal = _getCurrentSubtotal();
+    if (subtotal == 0) return const SizedBox.shrink();
+
+    final fees = subtotal * 0.05;
+    final total = subtotal + fees;
+
+    final recipientName = destinataireController.text.trim();
+    final recipientPhone = phoneController.text.trim();
+    final boutiqueName = selectedBoutique?.name ?? "ASSOU";
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Résumé de votre commande',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+              fontFamily: 'Nunito',
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (recipientName.isNotEmpty)
+            _buildSummaryRow('Bénéficiaire', recipientName),
+          if (recipientPhone.isNotEmpty)
+            _buildSummaryRow('Téléphone', recipientPhone),
+          _buildSummaryRow('Boutique', boutiqueName),
+          const Divider(height: 24),
+          _buildSummaryRow('Sous-total',
+              PriceUtils.formatPrice(subtotal, showCurrency: true)),
+          const SizedBox(height: 8),
+          _buildSummaryRow('Frais de service (5%)',
+              PriceUtils.formatPrice(fees, showCurrency: true)),
+          const Divider(height: 24),
+          _buildSummaryRow(
+            'Total à payer',
+            PriceUtils.formatPrice(total, showCurrency: true),
+            isTotal: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(String label, String value, {bool isTotal = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isTotal ? 16 : 14,
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
+            color: isTotal ? Colors.black : Colors.grey[600],
+            fontFamily: 'Nunito',
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: isTotal ? 16 : 14,
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
+            color: isTotal ? Colors.blue[700] : Colors.black87,
+            fontFamily: 'Nunito',
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _initiatePayment() async {
     // Validate custom amount
     final montantStr = montantController.text.trim();
@@ -381,13 +465,23 @@ class _AcheterBonPageState extends State<AcheterBonPage>
       return;
     }
 
+    // Prevent self-purchase
+    final currentUser = await UserService.getCurrentUser();
+    if (currentUser != null &&
+        recipientPhone.replaceAll(' ', '') ==
+            currentUser.phoneNumber.replaceAll(' ', '')) {
+      _showErrorSnackBar(
+          "Vous ne pouvez pas vous acheter et vous envoyer un bon à vous-même.");
+      return;
+    }
+
     // Boutique logic
     // If a boutique is selected, it's specific. If not, it's universal (or enforce selection?)
     // Assuming if boutique is null, it's universal.
     final bool isUniversal = selectedBoutique == null;
     final int? idBoutique = selectedBoutique?.id;
     final int? evenementId = selectedEventType?.id;
-    final String moyenPaiement = 'wave';
+    const String moyenPaiement = 'wave';
 
     AppLogger.info('🛒 Amorce de l\'achat de bon personnalisé', 'ACHETER');
 
@@ -396,8 +490,8 @@ class _AcheterBonPageState extends State<AcheterBonPage>
 
       // URLs de redirection avec schéma assou:// pour une ouverture directe de l'app
       // Note: Le backend ajoutera probablement la référence à la fin de l'URL
-      final successUrl = 'assou://payment/success';
-      final errorUrl = 'assou://payment/error';
+      const successUrl = 'assou://payment/success';
+      const errorUrl = 'assou://payment/error';
 
       final request = CustomVoucherPurchaseRequest(
           destinataire: recipientPhone,
@@ -594,13 +688,13 @@ class _AcheterBonPageState extends State<AcheterBonPage>
     // Reset dialog dismissal flag
     _dialogDismissed = false;
 
-    // ⏱️ AUTO TIMEOUT : 5 minutes (300s) max sans paiement pour laisser le temps à l'utilisateur
+    // ⏱️ AUTO TIMEOUT : 3 minutes (180s) max sans paiement pour laisser le temps à l'utilisateur
     _paymentTimeoutTimer?.cancel();
-    _paymentTimeoutTimer = Timer(const Duration(seconds: 300), () {
+    _paymentTimeoutTimer = Timer(const Duration(seconds: 180), () {
       if (!mounted) return;
 
       AppLogger.warning(
-          '⏳ Délai d\'attente de paiement (5 min) atteint – échec automatique',
+          '⏳ Délai d\'attente de paiement (3 min) atteint – échec automatique',
           'ACHETER');
 
       _paymentStatusTimer?.cancel();
@@ -1646,6 +1740,10 @@ class _AcheterBonPageState extends State<AcheterBonPage>
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 16),
+
+                  _buildOrderSummary(),
 
                   const SizedBox(height: 24),
 

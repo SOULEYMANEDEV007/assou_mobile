@@ -4,12 +4,12 @@ A modern Flutter mobile application for voucher/gift card management in Côte d'
 
 ## ✨ Key Features
 
--   **🔐 Authentication**: JWT-based login/register with phone validation
--   **🎫 Voucher Management**: Purchase, send, redeem digital vouchers with QR codes
--   **📱 QR Scanner**: Advanced scanning with boutique validation
--   **📊 Dashboard**: Real-time voucher statistics and transaction history
--   **👤 Profile Management**: Complete user profile with settings
--   **💳 Payment Integration**: Wave payment gateway with transaction tracking
+- **🔐 Authentication**: JWT-based login/register with phone validation
+- **🎫 Voucher Management**: Purchase, send, redeem digital vouchers with QR codes
+- **📱 QR Scanner**: Advanced scanning with boutique validation
+- **📊 Dashboard**: Real-time voucher statistics and transaction history
+- **👤 Profile Management**: Complete user profile with settings
+- **💳 Payment Integration**: Wave payment gateway with transaction tracking
 
 ## 🏗️ **Modern Architecture** (Enterprise-Ready)
 
@@ -46,28 +46,28 @@ lib/
 
 ### Material Design 3 Implementation
 
--   **Primary Color**: `#2F55E0` (Professional blue)
--   **Status Indicators**: Color-coded voucher states (green=active, yellow=expiring)
--   **Typography**: Clear hierarchy with proper spacing
--   **Card System**: Consistent rounded cards with subtle shadows
--   **Loading States**: Professional progress indicators
+- **Primary Color**: `#2F55E0` (Professional blue)
+- **Status Indicators**: Color-coded voucher states (green=active, yellow=expiring)
+- **Typography**: Clear hierarchy with proper spacing
+- **Card System**: Consistent rounded cards with subtle shadows
+- **Loading States**: Professional progress indicators
 
 ### Smart UI Components
 
--   `AppCard` - Consistent card layouts with elevation
--   `AppVoucherCard` - Specialized voucher display with status
--   `AppButton` - Multiple variants with loading states
--   `AppInput` - Enhanced form inputs with validation
+- `AppCard` - Consistent card layouts with elevation
+- `AppVoucherCard` - Specialized voucher display with status
+- `AppButton` - Multiple variants with loading states
+- `AppInput` - Enhanced form inputs with validation
 
 ## 🔧 Tech Stack
 
--   **Frontend**: Flutter 3.32.8 with Material Design 3
--   **Architecture**: Clean Architecture with separation of concerns
--   **State Management**: Built-in Flutter state with modern patterns
--   **Backend**: Laravel API with JWT authentication
--   **Database**: MySQL with Laravel Sanctum
--   **Payment**: Wave payment gateway integration
--   **QR**: Native QR generation and scanning
+- **Frontend**: Flutter 3.32.8 with Material Design 3
+- **Architecture**: Clean Architecture with separation of concerns
+- **State Management**: Built-in Flutter state with modern patterns
+- **Backend**: Laravel API with JWT authentication
+- **Database**: MySQL with Laravel Sanctum
+- **Payment**: Wave payment gateway integration
+- **QR**: Native QR generation and scanning
 
 ## 📊 Smart Business Models
 
@@ -102,9 +102,9 @@ class User {
 
 ### Prerequisites
 
--   Flutter SDK 3.5.4 or higher
--   Dart SDK 3.8.1 or higher
--   Android Studio / VS Code with Flutter extensions
+- Flutter SDK 3.5.4 or higher
+- Dart SDK 3.8.1 or higher
+- Android Studio / VS Code with Flutter extensions
 
 ### Quick Start
 
@@ -116,7 +116,7 @@ cd "assou_mobile"
 flutter pub get
 
 # Create environment file
-cp ..env.example ..env
+cp .env.example .env
 
 # Run on device
 flutter run
@@ -148,18 +148,18 @@ flutter run -d android
 
 ### Real Laravel API Endpoints
 
--   **Authentication**: `/api/v1/login`, `/register`, `/logout`, `/me`
--   **Vouchers**: `/mes-bon`, `/mes-bon-recu`, `/bon-actifs`, `/bon-envoyer`
--   **Payments**: `/paiements` with full transaction lifecycle
--   **Boutiques**: `/boutiques`, `/accueil/boutiques-avec-bons`
--   **QR Scanning**: `/qr/{code}` with boutique validation
+- **Authentication**: `/api/v1/login`, `/register`, `/logout`, `/me`
+- **Vouchers**: `/mes-bon`, `/mes-bon-recu`, `/bon-actifs`, `/bon-envoyer`
+- **Payments**: `/paiements` with full transaction lifecycle
+- **Boutiques**: `/boutiques`, `/accueil/boutiques-avec-bons`
+- **QR Scanning**: `/qr/{code}` with boutique validation
 
 ### Enterprise Features
 
--   **Type Safety**: Full type checking with proper error handling
--   **Token Management**: Automatic JWT token lifecycle
--   **Error Recovery**: Graceful API failure handling
--   **Loading States**: Professional UX during network calls
+- **Type Safety**: Full type checking with proper error handling
+- **Token Management**: Automatic JWT token lifecycle
+- **Error Recovery**: Graceful API failure handling
+- **Loading States**: Professional UX during network calls
 
 ## 📱 Modern API Patterns
 
@@ -188,18 +188,18 @@ if (response.success) {
 
 ### Enterprise-Grade Implementation
 
--   **Security**: JWT tokens with automatic refresh
--   **Performance**: Lazy loading and smart caching
--   **Reliability**: Comprehensive error boundaries
--   **Monitoring**: Professional logging system
--   **Scalability**: Clean architecture for easy maintenance
+- **Security**: JWT tokens with automatic refresh
+- **Performance**: Lazy loading and smart caching
+- **Reliability**: Comprehensive error boundaries
+- **Monitoring**: Professional logging system
+- **Scalability**: Clean architecture for easy maintenance
 
 ### User Experience
 
--   **Real-time Updates**: Live voucher status tracking
--   **Smart Calculations**: Automatic fee computation
--   **Offline Support**: Graceful offline degradation
--   **Accessibility**: Screen reader compatible
+- **Real-time Updates**: Live voucher status tracking
+- **Smart Calculations**: Automatic fee computation
+- **Offline Support**: Graceful offline degradation
+- **Accessibility**: Screen reader compatible
 
 ## 🧪 Development Commands
 
@@ -233,10 +233,10 @@ flutter run --profile
 
 ### Smart Validations
 
--   Phone number length by country
--   Voucher expiration warnings
--   Fee calculations with real-time updates
--   Token refresh on authentication errors
+- Phone number length by country
+- Voucher expiration warnings
+- Fee calculations with real-time updates
+- Token refresh on authentication errors
 
 ## 🔍 Troubleshooting
 
@@ -258,19 +258,19 @@ cd ios && pod install
 
 ## 📈 Performance Optimizations
 
--   **Image Caching**: Efficient boutique logo loading
--   **List Virtualization**: Smooth scrolling for large voucher lists
--   **API Optimization**: Minimal network requests with smart caching
--   **Memory Management**: Proper disposal of controllers and streams
+- **Image Caching**: Efficient boutique logo loading
+- **List Virtualization**: Smooth scrolling for large voucher lists
+- **API Optimization**: Minimal network requests with smart caching
+- **Memory Management**: Proper disposal of controllers and streams
 
 ## 🎯 Next Steps
 
--   ✅ **Architecture Migration**: COMPLETED
--   ✅ **Modern API Integration**: COMPLETED
--   ✅ **Smart Business Models**: COMPLETED
--   ⏳ **UI Polish**: Apply design screenshots
--   ⏳ **Advanced Features**: Push notifications, dark mode
--   ⏳ **Testing**: Comprehensive unit and integration tests
+- ✅ **Architecture Migration**: COMPLETED
+- ✅ **Modern API Integration**: COMPLETED
+- ✅ **Smart Business Models**: COMPLETED
+- ⏳ **UI Polish**: Apply design screenshots
+- ⏳ **Advanced Features**: Push notifications, dark mode
+- ⏳ **Testing**: Comprehensive unit and integration tests
 
 ---
 

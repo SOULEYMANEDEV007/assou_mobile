@@ -5,7 +5,6 @@ import 'package:ASSOU/data/services/user_service.dart';
 import '../../config/api_endpoints.dart';
 import '../models/bon_achat_model.dart';
 import '../models/api_response_model.dart';
-import '../models/voucher_transfer_model.dart';
 import '../../utils/logger.dart';
 import 'api_utils.dart';
 

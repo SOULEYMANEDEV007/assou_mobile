@@ -53,7 +53,7 @@ class ContactPickerWidget extends StatefulWidget {
   final double? fontSize;
 
   const ContactPickerWidget({
-    Key? key,
+    super.key,
     this.title = 'Destinataire',
     this.phonePlaceholder = 'Ex: 0707070707',
     required this.phoneController,
@@ -66,7 +66,7 @@ class ContactPickerWidget extends StatefulWidget {
     this.inputFormatters,
     this.validator,
     this.fontSize,
-  }) : super(key: key);
+  });
 
   @override
   State<ContactPickerWidget> createState() => _ContactPickerWidgetState();

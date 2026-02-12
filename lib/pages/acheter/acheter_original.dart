@@ -15,6 +15,8 @@ import '../payment/payment_screen.dart';
 
 // Cette page permet d'acheter des bons dans différentes boutiques
 class AcheterBonPage extends StatefulWidget {
+  const AcheterBonPage({super.key});
+
   @override
   State<AcheterBonPage> createState() => _AcheterBonPageState();
 }
@@ -1012,7 +1014,7 @@ class _AcheterBonPageState extends State<AcheterBonPage>
                                     ],
                                   ),
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ),
                         ),

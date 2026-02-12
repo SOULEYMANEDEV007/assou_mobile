@@ -147,6 +147,10 @@ class _MesBonsPageState extends State<MesBonsPage>
       }
 
       if (mounted) {
+        // Sort from most recent to least recent
+        utilisables.sort((a, b) =>
+            (b.dateAchat ?? DateTime(0)).compareTo(a.dateAchat ?? DateTime(0)));
+
         setState(() {
           _bonsUtilisables = utilisables;
           _tabHasMore[0] = utilisables.length >= _perPage;
@@ -181,6 +185,10 @@ class _MesBonsPageState extends State<MesBonsPage>
       }).toList();
 
       if (mounted) {
+        // Sort from most recent usage to least recent
+        utilises.sort((a, b) =>
+            (b.dateUsage ?? DateTime(0)).compareTo(a.dateUsage ?? DateTime(0)));
+
         setState(() {
           _bonsUtilises = utilises;
           _tabHasMore[1] = utilises.length >= _perPage;
@@ -226,6 +234,10 @@ class _MesBonsPageState extends State<MesBonsPage>
       }
 
       if (mounted) {
+        // Sort from most recent to least recent
+        envoyes.sort((a, b) =>
+            (b.dateAchat ?? DateTime(0)).compareTo(a.dateAchat ?? DateTime(0)));
+
         setState(() {
           _bonsEnvoyes = envoyes;
           _tabHasMore[2] = envoyes.length >= _perPage;
@@ -321,6 +333,7 @@ class _MesBonsPageState extends State<MesBonsPage>
           for (final bon in [...actifs, ...recus]) {
             if (!seenIds.contains(bon.id) &&
                 !bon.isExpired &&
+                bon.dateAchat != null && // 🔥 Only show paid vouchers
                 bon.isActiveForUser(_currentUser?.id) &&
                 (bon.receiverId == _currentUser?.id ||
                     bon.receiverId == null)) {
@@ -366,12 +379,18 @@ class _MesBonsPageState extends State<MesBonsPage>
           switch (_selectedFilter) {
             case 0:
               _bonsUtilisables.addAll(newVouchers);
+              _bonsUtilisables.sort((a, b) => (b.dateAchat ?? DateTime(0))
+                  .compareTo(a.dateAchat ?? DateTime(0)));
               break;
             case 1:
               _bonsUtilises.addAll(newVouchers);
+              _bonsUtilises.sort((a, b) => (b.dateUsage ?? DateTime(0))
+                  .compareTo(a.dateUsage ?? DateTime(0)));
               break;
             case 2:
               _bonsEnvoyes.addAll(newVouchers);
+              _bonsEnvoyes.sort((a, b) => (b.dateAchat ?? DateTime(0))
+                  .compareTo(a.dateAchat ?? DateTime(0)));
               break;
           }
 
@@ -565,7 +584,7 @@ class _MesBonsPageState extends State<MesBonsPage>
               margin: const EdgeInsets.only(bottom: 16),
               child: _buildVoucherCard(paiementBon),
             );
-          }).toList(),
+          }),
           if (_isLoadingMore)
             const Padding(
               padding: EdgeInsets.all(16.0),
@@ -583,12 +602,16 @@ class _MesBonsPageState extends State<MesBonsPage>
     final double amount = bon?.montantBon ?? paiementBon.montantBon;
     final String montant = PriceUtils.formatPrice(amount);
 
-    final bool isUniversal =
-        paiementBon.isUniversal || (bon?.isUniversal ?? false);
+    final String bName =
+        bon?.boutique?.name ?? paiementBon.boutique?.name ?? '';
+    final bool isUniversalName =
+        bName.toLowerCase() == "toutes les boutiques" ||
+            bName.toLowerCase() == "assou";
+    final bool isUniversal = paiementBon.isUniversal ||
+        (bon?.isUniversal ?? false) ||
+        isUniversalName;
 
-    final String boutiqueLabel = isUniversal
-        ? "Assou"
-        : "${bon?.boutique?.name ?? paiementBon.boutique?.name ?? 'Boutique'}";
+    final String boutiqueLabel = isUniversal ? "ASSOU" : bName;
     final String utilisationText =
         isUniversal ? "Toutes les boutiques" : boutiqueLabel;
 
@@ -670,18 +693,17 @@ class _MesBonsPageState extends State<MesBonsPage>
               ),
               const SizedBox(height: 8),
               SizedBox(
-                width: 70,
+                width: 85, // Légère augmentation de la largeur
                 child: Text(
                   boutiqueLabel,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11, // Légère réduction pour aider le wrap
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Nunito',
                     color: Color(0xFF1A1A1A),
                   ),
                   textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  // Retrait de maxLines et ellipsis pour voir tout le nom
                 ),
               ),
             ],
@@ -725,22 +747,6 @@ class _MesBonsPageState extends State<MesBonsPage>
                     ),
                   ),
                 ),
-
-                if (transferLabel != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      transferLabel,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontFamily: 'Nunito',
-                        color: isSentByMe
-                            ? Colors.blue.shade800
-                            : Colors.orange.shade800,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
 
                 const SizedBox(height: 16),
 
@@ -960,8 +966,7 @@ class _MesBonsPageState extends State<MesBonsPage>
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            UseScannerPage(idPaiementBon: paiementBon.id.toString()),
+        builder: (_) => UseScannerPage(idPaiementBon: paiementBon.slug),
       ),
     );
 

@@ -34,7 +34,6 @@ class _ToastDialog extends StatefulWidget {
   final Duration duration;
 
   const _ToastDialog({
-    super.key,
     required this.title,
     required this.message,
     required this.type,
